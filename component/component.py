@@ -23,7 +23,7 @@ class TapasModel:
     def transform(self, table: pd.DataFrame, queries: list):
         data_copy = table.copy()
         data_copy = data_copy.astype(str)
-        inputs = self.tokenizer(table=data_copy, queries=queries, padding='max_length', return_tensors="pt")
+        inputs = self.tokenizer(table=data_copy, queries=queries, padding='max_length', return_tensors="pt", truncation=True)
         outputs = self.model(**inputs)
 
         predicted_answer_coordinates, predicted_aggregation_indices = self.tokenizer.convert_logits_to_predictions(
@@ -49,7 +49,7 @@ class TapasModel:
                     cell_values.append(table.iat[coordinate])
                 answers.append(", ".join(cell_values))
 
-        print(tabulate(table, headers='firstrow'))
+        print(tabulate(table))
         for query, answer, predicted_agg in zip(queries, answers, aggregation_predictions_string):
             print(query)
             if predicted_agg == "NONE":
